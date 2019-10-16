@@ -234,14 +234,14 @@ def ftomo_fly_scan_wb(trigger_busy = '7bmb1:busy5',
     #Input EPICS PVs for scan parameters
     speed_PV = epics.PV('7bmb1:var:float1')
     delta_PV = epics.PV('7bmb1:var:float2')
-    start_PV = epics.PV('7bmb1:var:float3')
-    end_PV = epics.PV('7bmb1:var:float4')
+    start_PV = epics.PV('7bmb1:ExpInfo:SampleRotationStart')
+    end_PV = epics.PV('7bmb1:ExpInfo:SampleRotationEnd')
     retrace_PV = epics.PV('7bmb1:var:float5')
  
     #Input EPICS PVs for bright/dark image parameters
     bright_x_pos = epics.PV('7bmb1:var:float8')
     bright_y_pos = epics.PV('7bmb1:var:float9')
-    bd_imgnum = epics.PV('7bmb1:var:int2')
+    bd_imgnum = epics.PV('7bmb1:ExpInfo:NumWhiteImages')
     bright_exp = epics.PV('7bmb1:var:float10')
     #Important variables
     trigger_busy_PV = epics.PV(trigger_busy)
