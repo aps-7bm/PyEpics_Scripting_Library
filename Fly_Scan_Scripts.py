@@ -427,7 +427,8 @@ def ftomo_fly_scan_wb(trigger_busy = '7bmb1:busy5',
 def ffly_scan_daemon(fly_scan_func = ftomo_fly_scan_wb,
                                 trigger_busy='7bmb1:busy5', 
                                 repeat_busy='7bmb1:busy4',
-                                time_end_start=True):
+                                time_end_start=True,
+                                func_args = None):
     '''This is a single daemon process to allow fly scans to run automatically.
     If requested, perform a single scan and listen for more.    
     If requested, perform a repeated scan.
@@ -442,7 +443,10 @@ def ffly_scan_daemon(fly_scan_func = ftomo_fly_scan_wb,
     while True:
         #If we see the trigger_busy, this means we are doing one scan.
         if trigger_busy_PV.value == 1:
-            fly_scan_func()
+            if not func_args:
+                fly_scan_func()
+            else:
+                fly_scan_func(**func_args)
         #If we see the repeat_busy, that means to multiple scans.
         if repeated_scan_busy_PV.value == 1:
             print(epics.caget('7bmb1:var:int1'))
@@ -497,10 +501,21 @@ def ffly_scan_daemon(fly_scan_func = ftomo_fly_scan_wb,
             counter += 1
         time.sleep(0.01)
 
-def ffly_scan_daemon_tomo(trigger_busy='7bmb1:busy5', 
+def ffly_scan_daemon_tomo_pg1(trigger_busy='7bmb1:busy5', 
                                 repeat_busy='7bmb1:busy4',
                                 time_end_start=True):
-    return ffly_scan_daemon(ftomo_fly_scan_wb, trigger_busy, repeat_busy, time_end_start)
+    tomo_func_args = {'trigger_busy':'7bmb1:busy5',
+                    'trigger_PVs':{'7bm_pg1:cam1:Acquire':1}, 'cam_root':'7bm_pg1:'}
+    return ffly_scan_daemon(ftomo_fly_scan_wb, trigger_busy, repeat_busy, time_end_start,tomo_func_args)
+
+
+def ffly_scan_daemon_tomo_pg4(trigger_busy='7bmb1:busy5', 
+                                repeat_busy='7bmb1:busy4',
+                                time_end_start=True):
+    tomo_func_args = {'trigger_busy':'7bmb1:busy5',
+                    'trigger_PVs':{'7bm_pg4:cam1:Acquire':1}, 'cam_root':'7bm_pg4:'}
+    return ffly_scan_daemon(ftomo_fly_scan_wb, trigger_busy, repeat_busy, time_end_start,tomo_func_args)
+
 
 def ffly_scan_daemon_mcs(trigger_busy='7bmb1:busy5', 
                                 repeat_busy='7bmb1:busy4',
